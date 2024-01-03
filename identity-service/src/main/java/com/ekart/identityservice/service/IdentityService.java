@@ -5,11 +5,13 @@ import com.ekart.identityservice.exception.IdentityServiceException;
 import com.ekart.identityservice.repository.UserDetailRepository;
 import org.hibernate.id.IdentifierGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.ekart.identityservice.util.Constants.SUCCESS;
+import static com.ekart.identityservice.util.Constants.UPDATE_SUCCESS;
 
 @Service
 public class IdentityService {
@@ -25,9 +27,15 @@ public class IdentityService {
 
     public String saveUser(UserDetail userDetail) throws IdentityServiceException {
         userDetail.setPassword(passwordEncoder.encode(userDetail.getPassword()));
-        userDetailRepository.save(userDetail);
+        try {
+            userDetailRepository.save(userDetail);
+        }catch (DataIntegrityViolationException ex){
+            throw new IdentityServiceException("User Name Already exists");
+        }
         return SUCCESS;
     }
+
+
 
     public String generateToken(Authentication authentication) {
         return jwtService.generateToken(authentication);
@@ -42,5 +50,13 @@ public class IdentityService {
     }
 
 
-
+    public String updateUser(UserDetail userDetail) throws IdentityServiceException {
+        userDetail.setPassword(passwordEncoder.encode(userDetail.getPassword()));
+        try {
+            userDetailRepository.save(userDetail);
+        }catch (DataIntegrityViolationException ex){
+            throw new IdentityServiceException("User Name Already exists");
+        }
+        return UPDATE_SUCCESS;
+    }
 }

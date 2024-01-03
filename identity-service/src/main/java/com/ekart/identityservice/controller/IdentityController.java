@@ -25,11 +25,25 @@ public class IdentityController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
+    /**
+     * method to add new user
+     * @param userDetail
+     * @return Success message
+     */
     @PostMapping("/addUser")
     public String addUser(@RequestBody @Valid UserDetail userDetail) throws IdentityServiceException {
         return identityService.saveUser(userDetail);
     }
 
+
+
+
+    /**
+     * method to get the jwt token
+     * @param authRequest
+     * @return token
+     */
     @PostMapping("/getToken")
     public String getToken(@RequestBody AuthRequest authRequest) throws InvalidAccessException {
         try {
@@ -45,9 +59,26 @@ public class IdentityController {
         }
     }
 
+
+    /**
+     * method to validate the token
+     * @param token
+     * @return validation message
+     */
     @GetMapping("/validateToken")
     public String validateToken(@RequestParam("token") String token) throws IdentityServiceException {
         identityService.validateToken(token);
         return VALID_TOKEN;
+    }
+
+
+    /**
+     * method to add new user
+     * @param userDetail
+     * @return Success message
+     */
+    @PostMapping("/updateUser")
+    public String updateUser(@RequestBody @Valid UserDetail userDetail) throws IdentityServiceException {
+        return identityService.updateUser(userDetail);
     }
 }
